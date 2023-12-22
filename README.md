@@ -13,11 +13,13 @@ Follow these commands to setup and run the frontend project.
 
 First run `nvm use` command set NodeJS version this project required.
 
-### 2) `yarn add`
+### 2) `yarn`
 
 ### 3) `yarn start`
 
-### 4) `yarn fix:preBuild`
+### 4) `yarn build`
+
+### 5) `yarn fix:preBuild`
 
 Needs to execute before all git add/commit to fix Linting, TS, and SCSS issue and formatting.
 All below command will be executed when run `fix:preBuild`
@@ -26,7 +28,7 @@ All below command will be executed when run `fix:preBuild`
 - `yarn fix:lint`
 - `yarn fix:esLint`
 
-### 5) Update the API endpoint domain
+### 6) Update the API endpoint domain
 
 Update `const API_BASE_URL` under `src/api/endpoints.ts` (NOTE: As of now static. Needs to be in ENV)
 
