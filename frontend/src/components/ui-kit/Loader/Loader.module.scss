@@ -1,0 +1,11 @@
+@import 'assets/scss/_variables';
+.loading {
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: $blue;
+	width: calc(100% - 0.625rem);
+	color: $white;
+	padding: 0.3125rem 0.625rem;
+	text-align: center;
+}

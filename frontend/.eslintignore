@@ -1,0 +1,12 @@
+.vscode/
+.idea/
+dist/
+*.scss.d.ts
+node_modules
+.history/
+.cache/
+build/
+data/
+storybook-static/
+*.bundle.js
+src/openapi/

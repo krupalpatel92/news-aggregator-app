@@ -1,0 +1,37 @@
+.wrapper {
+	padding: 0;
+	overflow: hidden;
+	background-color: #eee;
+	border: 3px solid #eee;
+	border-radius: 15px;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	margin-bottom: 15px;
+}
+
+.logoLink {
+	padding-right: 20px;
+	border-right: 2px solid #eee;
+	margin-right: 20px;
+}
+
+.logoImg {
+	width: 75px;
+	padding: 5px;
+}
+
+.left {
+	padding: 10px 20px;
+	background-color: #fff;
+	flex-grow: 1;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	justify-content: flex-start;
+}
+
+.right {
+	padding: 10px 20px;
+}

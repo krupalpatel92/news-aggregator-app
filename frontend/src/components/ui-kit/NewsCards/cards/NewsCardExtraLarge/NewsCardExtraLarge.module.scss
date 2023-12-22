@@ -1,0 +1,16 @@
+@import 'assets/scss/_mixins';
+
+.card {
+	background-color: transparent;
+	flex-grow: 1;
+}
+
+.image {
+	@include cardImage();
+	aspect-ratio: 1/0.51;
+}
+
+.metaData {
+	position: relative;
+	z-index: 1;
+}

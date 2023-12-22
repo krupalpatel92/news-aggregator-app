@@ -1,0 +1,11 @@
+@mixin cardImage() {
+	width: 100%;
+	object-fit: cover;
+	border: 0 none;
+	transition: all 0.3s ease-in-out;
+	position: relative;
+	z-index: 2;
+	&:hover {
+		transform: scale(1.05);
+	}
+}

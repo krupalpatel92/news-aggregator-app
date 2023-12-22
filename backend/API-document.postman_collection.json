@@ -1,0 +1,572 @@
+{
+	"info": {
+		"_postman_id": "497ef8a3-9345-4cb8-903d-af884b915c6d",
+		"name": "News Aggregator",
+		"description": "Fetch news from third-parties like The NewsAPI.org, The Guardians, The New York Times and give access to at once place and help user to personalise feed by selecting source, author, and category",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "124858"
+	},
+	"item": [
+		{
+			"name": "Original News Feeders",
+			"item": [
+				{
+					"name": "NewsAPI.ORG",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://newsapi.org/v2/everything?q=title&language=en&sortBy=publishedAt&pageSize=100&apiKey=b3b70512105d4144bebedba022828d2b",
+							"protocol": "https",
+							"host": [
+								"newsapi",
+								"org"
+							],
+							"path": [
+								"v2",
+								"everything"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "title"
+								},
+								{
+									"key": "language",
+									"value": "en"
+								},
+								{
+									"key": "sortBy",
+									"value": "publishedAt"
+								},
+								{
+									"key": "pageSize",
+									"value": "100"
+								},
+								{
+									"key": "apiKey",
+									"value": "b3b70512105d4144bebedba022828d2b"
+								}
+							]
+						},
+						"description": "Visit [https://newsapi.org/docs](https://newsapi.org/docs) for more info"
+					},
+					"response": []
+				},
+				{
+					"name": "The Guardian",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://content.guardianapis.com/search?api-key=63030e6e-2526-4ded-8f93-2179fd711a3c&page-size=200",
+							"protocol": "https",
+							"host": [
+								"content",
+								"guardianapis",
+								"com"
+							],
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "63030e6e-2526-4ded-8f93-2179fd711a3c"
+								},
+								{
+									"key": "page-size",
+									"value": "200"
+								}
+							]
+						},
+						"description": "- Get Start from here ([https://open-platform.theguardian.com/access/](https://open-platform.theguardian.com/access/)) and get API key\n- Explore API right now [https://open-platform.theguardian.com/explore/](https://open-platform.theguardian.com/explore/)\n    \n- Lear more about The Guardian API [https://open-platform.theguardian.com/documentation/](https://open-platform.theguardian.com/documentation/)"
+					},
+					"response": []
+				},
+				{
+					"name": "New York Times",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=EfbnlerqG4jrTxZZ4OOvmZV7CtJLfWBI&sort=newest&q=india&page=100",
+							"protocol": "https",
+							"host": [
+								"api",
+								"nytimes",
+								"com"
+							],
+							"path": [
+								"svc",
+								"search",
+								"v2",
+								"articlesearch.json"
+							],
+							"query": [
+								{
+									"key": "api-key",
+									"value": "EfbnlerqG4jrTxZZ4OOvmZV7CtJLfWBI"
+								},
+								{
+									"key": "sort",
+									"value": "newest"
+								},
+								{
+									"key": "q",
+									"value": "india"
+								},
+								{
+									"key": "page",
+									"value": "100"
+								},
+								{
+									"key": "page",
+									"value": null,
+									"disabled": true
+								}
+							]
+						},
+						"description": "- Get start from here [https://developer.nytimes.com/apis](https://developer.nytimes.com/apis)\n    \n- Look at the Article Search API [https://developer.nytimes.com/docs/articlesearch-product/1/overview](https://developer.nytimes.com/docs/articlesearch-product/1/overview)\n    \n- Explore API right now [https://developer.nytimes.com/docs/articlesearch-product/1/routes/articlesearch.json/get](https://developer.nytimes.com/docs/articlesearch-product/1/routes/articlesearch.json/get)"
+					},
+					"response": []
+				}
+			],
+			"description": "Original endpoints of News Feeders"
+		},
+		{
+			"name": "Sync Feed",
+			"item": [
+				{
+					"name": "Get Latest News Feed",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiNzM5ODhmNzViNjdhMjc2N2ViODdlMWVkNzMxYzRmMzc2Njg3ZmMxN2U1YzZmMmVhMzI4Njk3OTU0NWM1YjU0M2Y2ZDU5ZjQ4MWI4ZmRlNTMiLCJpYXQiOjE3MDI3MDM1NjYuNDQ2NjA1LCJuYmYiOjE3MDI3MDM1NjYuNDQ2NjA2LCJleHAiOjE3MzQzMjU5NjYuNDQ1MDksInN1YiI6IjIiLCJzY29wZXMiOltdfQ.cSr7hN5hr1Lg9HSTLWdUAPo7hbzbr5k6F4-BbuJJ5pJpyeDejPn2DsGcl9ab0uw4G56AmaAoD6PFaJLKg8GwqzjqsLirRkSfX8m09dW4VQ13jUXyj42hlPqVsRuiKjkEvjMMAwi3B3BUGswiRcffmJfNuLJE-km2j-sO0D15MBc2fV5o_KnFvYCteVSGWpM33HjQG73HP33s_hPKTZs6CcB4eItINRmXX3-QYhpiYpiVWv72X9CYl6eaOIXeRDH1WPBfQKheb8R99bpJeD06vofY8rALuneRegkyku_ZpefwNzXdcZkt9VT04k-cAFVYkaWY9VTocNeods2dogUE1X3WDod3KAxsmkHVnMb-cF7wVYTcDYcXT4GwRxO8KDtru9iItNuPjw0tecOj8Y_vXD-Y88_QpLhJfVBxlnXDnNajEGhVllsfKghdyp614bgbpWbrjxvk7rMXHnQ9AaPDw5zyUnFdYxUyDL_Mw01TjonF3ID5xg6Lo0LBfL7yk1fBWC5Xnh0c5doK5Oq7qcKJE2afHKsuyeCSKFoTEgVtqjIcGZl1T3u9ZE6PQMLFZ32iKFRHOYuu_EsS5wuesp9-HRQv5CDrZEv3hAV1TrjCBKFAO41Rz2nguU5k4vFbXVEiaZGoW2wUtpJUWkqq_1R1kglYvueRry7fyZqDZiKb7Ns",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/news/feeders/sync-feed?feeder=the-ny-times&query=tech&perPage=10&page=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"news",
+								"feeders",
+								"sync-feed"
+							],
+							"query": [
+								{
+									"key": "feeder",
+									"value": "the-ny-times",
+									"description": "- news-api-org\n- the-guardian\n- the-ny-times"
+								},
+								{
+									"key": "query",
+									"value": "tech",
+									"description": "Any word you want to get news for. \n(Ex. tech, business, sport, world, politics)"
+								},
+								{
+									"key": "perPage",
+									"value": "10",
+									"description": "- NewsAPI.org provides max 100 perPage.\n- TheGuardian provides max 200 perPage.\n- NyTimes is not supporting per page records"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "- NYTimes support max 100 page per page 10 records only"
+								}
+							]
+						},
+						"description": "By passing News Source name this API will fetch the data from Original News Sources and store into local DB.\n\nnews-api-org\nthe-guardian\nthe-ny-times"
+					},
+					"response": []
+				}
+			],
+			"description": "To fetch the new data from NewsAPI.org, The Guardian, and NYTimes and insert into DB."
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "SignUp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Krupal Patel\",\n    \"email\": \"krupalpatel92+test7@gmail.com\",\n    \"password\": \"Test@123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/signup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						},
+						"description": "SignUp with name, email, and password."
+					},
+					"response": []
+				},
+				{
+					"name": "SignIn",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"krupalpatel92@gmail.com\",\n    \"password\": \"Test@123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/signin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"signin"
+							]
+						},
+						"description": "SignIn with email and password"
+					},
+					"response": []
+				}
+			],
+			"description": "User SignUp, SignIn APIs"
+		},
+		{
+			"name": "Articles",
+			"item": [
+				{
+					"name": "Article Search",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/news/articles/search?limit=10&page=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"news",
+								"articles",
+								"search"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "th",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "start_date",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "end_date",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "source",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "author",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "4,49",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Users can search for articles by keyword and filter the results by Date, Author, Category, and Source."
+					},
+					"response": []
+				}
+			],
+			"description": "Article search and filters"
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "List of Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/news/categories",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"news",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authors",
+			"item": [
+				{
+					"name": "List of Authors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/news/authors",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"news",
+								"authors"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Sources",
+			"item": [
+				{
+					"name": "List of Sources",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/news/sources",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"news",
+								"sources"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "User Preferences",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/user/me/preferences",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"me",
+								"preferences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Profile",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/user/me/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"me",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update News Feed Preferences",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"categoryIds\": \"1,2,34\",\n    \"sourceIds\": \"2,3\",\n    \"authorIds\": \"2,3\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/user/me/preferences/feed",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"me",
+								"preferences",
+								"feed"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://127.0.0.1:8000"
+		},
+		{
+			"key": "accessToken",
+			"value": "ACCESS_TOKEN"
+		}
+	]
+}

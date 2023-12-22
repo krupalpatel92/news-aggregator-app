@@ -1,0 +1,22 @@
+@import 'assets/scss/_variables.scss';
+
+.menu {
+	margin: 0;
+	padding: 0;
+	list-style: none outside;
+	display: flex;
+	gap: 15px;
+}
+
+.menuItem {
+	a {
+		text-decoration: none;
+		color: $dark;
+		&.isActive {
+			color: $pink;
+		}
+		&:hover {
+			color: $pink;
+		}
+	}
+}
