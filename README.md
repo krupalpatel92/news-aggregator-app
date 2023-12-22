@@ -5,6 +5,8 @@ News Aggregator web site
 Frontend Tech:- React + TypeScript + ReactQuery by TanStack https://tanstack.com/query/v3/
 Backend Tech:- PHP + Laravel + MySQL
 
+![News Aggregator App Video](React-App.mp4)
+
 ## Frontend Setup
 
 Follow these commands to setup and run the frontend project.
