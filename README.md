@@ -2,6 +2,8 @@
 
 News Aggregator web site
 
+![App Home Page](./screenshot.png)
+
 Frontend Tech:- React + TypeScript + ReactQuery by TanStack https://tanstack.com/query/v3/
 Backend Tech:- PHP + Laravel + MySQL
 
