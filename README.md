@@ -1,13 +1,19 @@
 ## News Site
 
-News Aggregator web site
+News Aggregator web site: PHP + Laravel + ReactJS
+
+**Frontend Tech:-** ReactJS, TypeScript, ReactQuery by TanStack https://tanstack.com/query/v3/
+
+**Backend Tech:-** PHP, Laravel, MySQL
+
+**News Feed From**
+- [NewAPI.org - https://newsapi.org](https://newsapi.org)
+- [The Guardian - https://www.theguardian.com](https://www.theguardian.com)
+- [New York Time - https://nytimes.com](https://nytimes.com)
+
+![News Aggregator App Video](./video.mp4)
 
 ![App Home Page](./screenshot.png)
-
-Frontend Tech:- React + TypeScript + ReactQuery by TanStack https://tanstack.com/query/v3/
-Backend Tech:- PHP + Laravel + MySQL
-
-![News Aggregator App Video](React-App.mp4)
 
 ## Frontend Setup
 
