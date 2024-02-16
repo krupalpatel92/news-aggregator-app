@@ -1,4 +1,4 @@
-## News Site
+## News Site PHP + Laravel + ReactJS + TypeScript
 
 News Aggregator web site: PHP + Laravel + ReactJS
 
