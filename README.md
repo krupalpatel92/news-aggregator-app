@@ -6,7 +6,21 @@ News Aggregator web site: PHP + Laravel + ReactJS
 
 **Backend Tech:-** PHP, Laravel, MySQL
 
-**News Feed From**
+**Feature**
+1) Signup / Signin
+2) Personalized Feed recommendation
+3) Save the Search result
+4) Search & Filter by text, category, author, and source
+5) Social SignIn (ToDo)
+6) Bookmark Search Result (ToDo)
+7) Social Share (ToDo)
+8) Comments & Discussion thread (ToDo)
+9) Provide User Independent News Feeder. So, the user can add multiple news feed sources as needed. (ToDo)
+10) Mobile APP using ReactJS + CapacitorJS (ToDo)
+
+
+
+**News Feed Source From**
 - [NewAPI.org - https://newsapi.org](https://newsapi.org)
 - [The Guardian - https://www.theguardian.com](https://www.theguardian.com)
 - [New York Time - https://nytimes.com](https://nytimes.com)
