@@ -1,12 +1,19 @@
 <template>
   <div class="w-100">
-    <div 
-      v-if="urlMessage" 
-      :class="`alert alert-${urlMessage.type || 'info'} alert-dismissible fade show`" 
+    <div
+      v-if="urlMessage"
+      :class="`alert alert-${
+        urlMessage.type || 'info'
+      } alert-dismissible fade show`"
       role="alert"
     >
       {{ urlMessage.text }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
     </div>
 
     <form @submit.prevent="handleSubmit" class="mt-4">
@@ -17,7 +24,10 @@
           id="email"
           name="email"
           v-model="form.email"
-          :class="['form-control', { 'is-invalid': errors.email && touched.email }]"
+          :class="[
+            'form-control',
+            { 'is-invalid': errors.email && touched.email },
+          ]"
           @blur="handleBlur('email')"
         />
         <div v-if="errors.email && touched.email" class="invalid-feedback">
@@ -32,10 +42,16 @@
           id="password"
           name="password"
           v-model="form.password"
-          :class="['form-control', { 'is-invalid': errors.password && touched.password }]"
+          :class="[
+            'form-control',
+            { 'is-invalid': errors.password && touched.password },
+          ]"
           @blur="handleBlur('password')"
         />
-        <div v-if="errors.password && touched.password" class="invalid-feedback">
+        <div
+          v-if="errors.password && touched.password"
+          class="invalid-feedback"
+        >
           {{ errors.password }}
         </div>
       </div>
@@ -48,9 +64,7 @@
           v-model="form.rememberMe"
           class="form-check-input"
         />
-        <label class="form-check-label" for="rememberMe">
-          Remember Me
-        </label>
+        <label class="form-check-label" for="rememberMe"> Remember Me </label>
       </div>
 
       <div class="d-flex align-items-center gap-3">
@@ -62,7 +76,11 @@
         </router-link>
       </div>
 
-      <div v-if="!isSubmitting && error" class="alert alert-danger mt-3" role="alert">
+      <div
+        v-if="!isSubmitting && error"
+        class="alert alert-danger mt-3"
+        role="alert"
+      >
         Wrong Credentials
       </div>
     </form>
@@ -74,6 +92,7 @@ import { defineComponent, ref, reactive } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { object, string } from "yup";
 import { omit } from "lodash";
+import { useSignInMutation } from "@/api/user/signin";
 
 const validationSchema = object({
   email: string().email("Invalid email address").required("Email is required"),
@@ -87,7 +106,8 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const route = useRoute();
-    
+    const { mutate: signIn } = useSignInMutation();
+
     const form = reactive({
       email: "",
       password: "",
@@ -140,20 +160,7 @@ export default defineComponent({
 
       try {
         // TODO: Implement sign in API call
-        const response = await fetch("/api/signin", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(omit(form, ["rememberMe"])),
-        });
-
-        if (!response.ok) {
-          throw new Error("Invalid credentials");
-        }
-
-        // Handle successful sign in
-        router.push("/");
+        await signIn(omit(form, ["rememberMe"]));
       } catch (err) {
         error.value = true;
       } finally {
@@ -173,4 +180,4 @@ export default defineComponent({
     };
   },
 });
-</script> 
+</script>

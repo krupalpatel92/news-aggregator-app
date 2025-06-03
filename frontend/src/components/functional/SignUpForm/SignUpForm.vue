@@ -100,8 +100,10 @@ import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { object, string, ref as yupRef, boolean } from "yup";
 import { omit } from "lodash";
+import { useSignUpMutation } from "@/api/user/signup";
 
 const router = useRouter();
+const { mutate: signUp, isLoading } = useSignUpMutation();
 
 // Form validation schema
 const validationSchema = object({
@@ -186,31 +188,9 @@ const handleSubmit = async () => {
   error.value = "";
 
   try {
-    // TODO: Implement sign up API call
-    const response = await fetch("/api/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(omit(form, ["confirmPassword", "agreed"])),
-    });
-
-    if (!response.ok) {
-      throw new Error("Registration failed. Please try again.");
-    }
-
-    // Handle successful registration
-    router.push({
-      path: "/signin",
-      state: {
-        message: {
-          type: "success",
-          text: "Registration successful! Please sign in.",
-        },
-      },
-    });
+    await signUp(omit(form, ["confirmPassword", "agreed"]));
   } catch (err: any) {
-    error.value = err.message;
+    error.value = err.message || "Registration failed. Please try again.";
   } finally {
     isSubmitting.value = false;
   }

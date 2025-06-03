@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class TheNewYorkTimesFeedHelper
 {
@@ -189,34 +190,60 @@ class TheNewYorkTimesFeedHelper
      */
     public function makeRelationsWithArticle($articles, $sources, $authors, $categories)
     {
-
         $articlesToCreate = [];
-
-        foreach ($articles as $article) {
-
-            array_push($articlesToCreate, [
-                'catId' => array_values(array_filter($categories, function ($cat) use ($article) {
+    
+        foreach ($articles as $index => $article) {
+            Log::info("Processing article at index {$index}", ['article' => $article]);
+    
+            try {
+                // Log category matching
+                $categoryMatch = array_values(array_filter($categories, function ($cat) use ($article) {
                     return $cat["slug"] === $this->getCategorySlug($this->getCategoryName($article));
-                }))[0]["id"] ?? null,
-                'authorId' => array_values(array_filter($authors, function ($author) use ($article) {
+                }));
+                Log::info("Category match result", ['categoryMatch' => $categoryMatch[0] ?? null]);
+    
+                // Log author matching
+                $authorMatch = array_values(array_filter($authors, function ($author) use ($article) {
                     return $author["slug"] === $this->getAuthorSlug($this->defaultAuthorName);
-                }))[0]["id"] ?? null,
-                'sourceId' => array_values(array_filter($sources, function ($source) use ($article) {
+                }));
+                Log::info("Author match result", ['authorMatch' => $authorMatch]);
+    
+                // Log source matching
+                $sourceMatch = array_values(array_filter($sources, function ($source) use ($article) {
                     return $source["slug"] === $this->getSourceSlug($this->defaultSourceName);
-                }))[0]["id"] ?? null,
-                'feederId' => $this->feeder->id,
-                'name' => $article["headline"]["main"],
-                'slug' => newsArticleUniqueSlug($article["headline"]["main"]),
-                'imgUrl' => isset($article["multimedia"][0]["url"]) ? "https://https://www.nytimes.com/" . $article["multimedia"][0]["url"] : null,
-                'URL' => $article["web_url"],
-                'summary' => $article["snippet"],
-                'content' => $article["lead_paragraph"],
-                'originalRawData' => $article,
-                'publishedAt' => $article["pub_date"],
-
-            ]);
+                }));
+                Log::info("Source match result", ['sourceMatch' => $sourceMatch]);
+    
+                // Build article data
+                $articleData = [
+                    'catId' => isset($categoryMatch[0]) ? $categoryMatch[0]['id'] : null,
+                    'authorId' => isset($authorMatch[0]) ? $authorMatch[0]['id'] : null,
+                    'sourceId' => isset($sourceMatch[0]) ? $sourceMatch[0]['id'] : null,
+                    'feederId' => $this->feeder->id,
+                    'name' => $article["headline"]["main"],
+                    'slug' => newsArticleUniqueSlug($article["headline"]["main"]),
+                    'imgUrl' => isset($article["multimedia"][0]["url"]) ? "https://www.nytimes.com/" . $article["multimedia"][0]["url"] : null,
+                    'URL' => $article["web_url"],
+                    'summary' => $article["snippet"],
+                    'content' => $article["lead_paragraph"] ?? null, // Handle missing key gracefully
+                    'originalRawData' => $article,
+                    'publishedAt' => $article["pub_date"],
+                ];
+    
+                Log::info("Article data prepared", ['articleData' => $articleData]);
+    
+                array_push($articlesToCreate, $articleData);
+            } catch (\Exception $e) {
+                Log::error("Error while processing article at index {$index}", [
+                    'article' => $article,
+                    'exception' => $e->getMessage(),
+                ]);
+                throw $e; // Re-throw the exception to handle it higher up
+            }
         }
-
+    
+        Log::info("Finished processing articles", ['articlesToCreate' => $articlesToCreate]);
+    
         return $articlesToCreate;
     }
 }

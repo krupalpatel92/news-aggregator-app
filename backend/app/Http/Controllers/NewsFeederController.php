@@ -12,6 +12,7 @@ use App\Helpers\NewsApiOrgFeedHelper;
 use App\Helpers\TheGuardianFeedHelper;
 use App\Helpers\TheNewYorkTimesFeedHelper;
 use Error;
+use Illuminate\Support\Facades\Log;
 
 class NewsFeederController extends Controller
 {
@@ -94,6 +95,7 @@ class NewsFeederController extends Controller
 
         // Get the latest right helper for the feeder
         $newsFeedHelper = $this->getNewsFeedHelper($feeder, $request->query('query'), $request->query('perPage'), $request->query('page'));
+        Log::info("News Feed Helper", ['newsFeedHelper' => $newsFeedHelper]);
         if (isset($newsFeedHelper->error)) return response()->json(['error' => $newsFeedHelper->error], 404);
 
         try {
@@ -103,17 +105,24 @@ class NewsFeederController extends Controller
             return response()->json(["error" => "Having some error in fetching latest news feed from the feeder: " . $feeder->name . "."], 500);
         }
 
+        Log::info("News is",['news' => $news]);
+
         try {
             // Create new categories, authors, sources and articles
             $newsSources = $this->newsSourceCtrl->getExistingWithNewlyCreated($news["sources"]);
+            // Log::info("Processed sources", ['newsSources' => $newsSources]);
             $newsAuthors = $this->newsAuthorCtrl->getExistingWithNewlyCreated($news["authors"]);
+            // Log::info("Processed authors", ['newsAuthors' => $newsAuthors]);
             $newsCategory = $this->newsCategoryCtrl->getExistingWithNewlyCreated($news["categories"]);
+            // Log::info("Processed categories", ['newsCategory' => $newsCategory]);
 
             // Store database IDs of source, author, and category into article before creating article in DB 
             $newsArticles = $newsFeedHelper->makeRelationsWithArticle($news["articles"], $newsSources, $newsAuthors, $newsCategory);
+            Log::info("Articles with relations", ['newsArticles' => $newsArticles]);
 
             // Create new articles
             $newsArticles = $this->newsArticleCtrl->createArticles($newsArticles);
+            Log::info("Created articles", ['newsArticles' => $newsArticles]);
         } catch (\Exception $e) {
             return response()->json(["error" => "Having error while creating News Authors, Sources, Categories, and article into DB"], 500);
         }

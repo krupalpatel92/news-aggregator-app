@@ -108,6 +108,7 @@ import FeedAlert from "@/components/ui/FeedAlert/FeedAlert.vue";
 import NewsCard from "@/components/NewsCard.vue";
 import ContentWrapper from "@/components/ui/ContentWrapper/ContentWrapper.vue";
 import SearchFilters from "@/components/functional/Filters/SearchFilters.vue";
+import { useCategoriesQuery } from "@/api/category/category";
 
 // State
 const loading = ref(false);
@@ -115,6 +116,9 @@ const articles = ref<any[]>([]);
 const categories = ref<any[]>([]);
 const authors = ref<any[]>([]);
 const sources = ref<any[]>([]);
+
+const { data } = useCategoriesQuery();
+console.log("Categories data:", data);
 
 // Computed properties
 const smallNewsCards = computed(() => articles.value.slice(1, 6));
