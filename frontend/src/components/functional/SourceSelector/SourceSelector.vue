@@ -1,26 +1,24 @@
 <template>
   <div class="selector-wrapper">
-    <Multiselect
-      v-model="selectedItems"
+    <a-select
+      v-model:value="selectedItems"
+      mode="multiple"
+      placeholder="Select sources"
       :options="options"
-      :searchable="true"
-      :close-on-select="false"
-      :clear-on-select="false"
-      :preserve-search="true"
-      placeholder="Select sources..."
-      label="label"
-      track-by="value"
-      :loading="isLoading"
-      :multiple="true"
-      @update:modelValue="handleChange"
+      :filter-option="filterOption"
+      @change="handleChange"
+      class="source-select"
+      :dropdown-style="{ padding: '8px' }"
+      :max-tag-count="3"
+      :dropdown-match-select-width="true"
+      :show-search="true"
+      :virtual="false"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
-import Multiselect from "@vueform/multiselect";
-import "@vueform/multiselect/themes/default.css";
 import { useSourcesStore } from "@/stores/sources";
 import { sortBy } from "lodash-es";
 
@@ -34,7 +32,7 @@ const emit = defineEmits<{
 
 const sourcesStore = useSourcesStore();
 const isLoading = ref(true);
-const selectedItems = ref([]);
+const selectedItems = ref<number[]>([]);
 
 const options = computed(() => {
   if (!sourcesStore.sources) return [];
@@ -44,20 +42,19 @@ const options = computed(() => {
   }));
 });
 
-const handleChange = (values: any[]) => {
-  emit(
-    "update:modelValue",
-    values.map((v) => v.value)
-  );
+const filterOption = (input: string, option: any) => {
+  return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+};
+
+const handleChange = (values: number[]) => {
+  emit("update:modelValue", values || []);
 };
 
 watch(
-  () => props.modelValue,
-  (newValue) => {
-    if (newValue && options.value) {
-      selectedItems.value = options.value.filter((opt) =>
-        newValue.includes(opt.value)
-      );
+  [() => props.modelValue, () => sourcesStore.sources],
+  ([newValue, sources]) => {
+    if (newValue && sources && sources.length > 0) {
+      selectedItems.value = Array.isArray(newValue) ? newValue : [newValue];
     } else {
       selectedItems.value = [];
     }
@@ -79,18 +76,82 @@ onMounted(async () => {
   min-width: 200px;
 }
 
-:deep(.multiselect) {
-  background: #f8f9fa;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+:deep(.source-select) {
+  width: 100%;
 
-  &:hover {
-    border-color: #007bff;
+  .ant-select-selector {
+    background: #f8f9fa !important;
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;
+    min-height: 38px !important;
+    padding: 2px 8px !important;
+
+    &:hover {
+      border-color: #007bff !important;
+    }
   }
 
-  &.is-active {
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
-    border-color: #007bff;
+  &.ant-select-focused {
+    .ant-select-selector {
+      border-color: #007bff !important;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1) !important;
+    }
+  }
+
+  .ant-select-selection-placeholder {
+    color: #6c757d;
+    line-height: 32px;
+  }
+
+  .ant-select-selection-item {
+    background: #e9ecef;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    margin: 2px;
+  }
+
+  .ant-select-selection-search {
+    margin-inline-start: 0;
+  }
+}
+
+:deep(.ant-select-dropdown) {
+  padding: 4px;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 
+              0 6px 16px 0 rgba(0, 0, 0, 0.08),
+              0 9px 28px 8px rgba(0, 0, 0, 0.05);
+
+  .ant-select-item {
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 2px 0;
+    color: #495057;
+
+    &:hover {
+      background-color: #f8f9fa;
+    }
+
+    &-option-selected {
+      background-color: #e9ecef !important;
+      font-weight: 500;
+    }
+
+    &-option-active {
+      background-color: #f8f9fa;
+    }
+  }
+
+  .ant-select-empty {
+    padding: 12px;
+    color: #6c757d;
+  }
+
+  .ant-select-item-empty {
+    padding: 12px;
+    color: #6c757d;
+    text-align: center;
   }
 }
 </style>

@@ -3,17 +3,17 @@
     <FeedAlert />
     <div class="row mb-4">
       <div class="col">
-        <SearchFilters />
+        <SearchFilters @search="handleSearch" />
       </div>
     </div>
 
-    <div v-if="loading" class="row">
+    <div v-if="isLoading" class="row">
       <div class="col">
         <p class="text-center">Fetching news articles...</p>
       </div>
     </div>
 
-    <template v-else-if="articles.length > 0">
+    <template v-else-if="articles?.length > 0">
       <div class="row mb-4">
         <div class="col-lg-8 mb-4 mb-lg-0">
           <NewsCard
@@ -61,7 +61,7 @@
               <router-link
                 v-for="category in categories"
                 :key="category.slug"
-                :to="'/category/' + category.slug"
+                :to="{ query: { category: category.id } }"
                 class="text-decoration-none"
               >
                 <span class="badge bg-primary">{{ category.name }}</span>
@@ -75,7 +75,7 @@
               <router-link
                 v-for="source in sources"
                 :key="source.slug"
-                :to="'/source/' + source.slug"
+                :to="{ query: { source: source.id } }"
                 class="text-decoration-none"
               >
                 <span class="badge bg-primary">{{ source.name }}</span>
@@ -89,7 +89,7 @@
               <router-link
                 v-for="author in authors"
                 :key="author.slug"
-                :to="'/author/' + author.slug"
+                :to="{ query: { author: author.id } }"
                 class="text-decoration-none"
               >
                 <span class="badge bg-primary">{{ author.name }}</span>
@@ -99,55 +99,86 @@
         </div>
       </div>
     </template>
+
+    <template v-else>
+      <div class="row">
+        <div class="col">
+          <p class="text-center">No articles found matching your criteria.</p>
+        </div>
+      </div>
+    </template>
   </ContentWrapper>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import FeedAlert from "@/components/ui/FeedAlert/FeedAlert.vue";
 import NewsCard from "@/components/NewsCard.vue";
 import ContentWrapper from "@/components/ui/ContentWrapper/ContentWrapper.vue";
 import SearchFilters from "@/components/functional/Filters/SearchFilters.vue";
 import { useCategoriesQuery } from "@/api/category/category";
+import { useAuthorsQuery } from "@/api/authors/author";
+import { useSourcesQuery } from "@/api/sources/source";
+import { useSearchArticlesQuery } from "@/api/articles/search";
 
-// State
-const loading = ref(false);
-const articles = ref<any[]>([]);
-const categories = ref<any[]>([]);
-const authors = ref<any[]>([]);
-const sources = ref<any[]>([]);
+const route = useRoute();
+const searchParams = ref("");
 
-const { data } = useCategoriesQuery();
-console.log("Categories data:", data);
+// Fetch metadata
+const { data: categoriesData } = useCategoriesQuery();
+const { data: authorsData } = useAuthorsQuery();
+const { data: sourcesData } = useSourcesQuery();
 
-// Computed properties
+const categories = computed(() => categoriesData.value || []);
+const authors = computed(() => authorsData.value || []);
+const sources = computed(() => sourcesData.value || []);
+
+// Create search params from route query
+const createSearchParams = () => {
+  const payload = {
+    keyword: route.query.keyword as string,
+    startDate: route.query.start_date as string,
+    endDate: route.query.end_date as string,
+    categoryIds: route.query.category
+      ? (route.query.category as string).split(",").map(Number)
+      : undefined,
+    authorIds: route.query.author
+      ? (route.query.author as string).split(",").map(Number)
+      : undefined,
+    sourceIds: route.query.source
+      ? (route.query.source as string).split(",").map(Number)
+      : undefined,
+  };
+  return JSON.stringify(payload);
+};
+
+// Initialize search params and create computed property for current params
+const currentSearchParams = computed(() => createSearchParams());
+console.log("Current search params:", currentSearchParams.value);
+
+// Search articles with the current params
+const { data: searchData, isLoading } = useSearchArticlesQuery(
+  currentSearchParams.value
+);
+const articles = computed(() => searchData.value?.articles || []);
+
+// Article display sections
 const smallNewsCards = computed(() => articles.value.slice(1, 6));
 const largeNewsCards = computed(() => articles.value.slice(6, 8));
 const mediumNewsCards = computed(() => articles.value.slice(8));
 
-// Fetch data on component creation
-const fetchData = async () => {
-  loading.value = true;
-  try {
-    // TODO: Implement API calls to fetch data
-    // Example:
-    // const [articlesData, categoriesData, authorsData, sourcesData] = await Promise.all([
-    //   fetch('/api/articles').then(res => res.json()),
-    //   fetch('/api/categories').then(res => res.json()),
-    //   fetch('/api/authors').then(res => res.json()),
-    //   fetch('/api/sources').then(res => res.json())
-    // ]);
-    //
-    // articles.value = articlesData;
-    // categories.value = categoriesData;
-    // authors.value = authorsData;
-    // sources.value = sourcesData;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  } finally {
-    loading.value = false;
-  }
+const handleSearch = () => {
+  // The search will be triggered automatically by the computed property
+  console.log("Search triggered with params:", currentSearchParams.value);
 };
 
-fetchData();
+// Watch for query changes to trigger search
+watch(
+  () => route.query,
+  () => {
+    handleSearch();
+  },
+  { immediate: true, deep: true }
+);
 </script>
