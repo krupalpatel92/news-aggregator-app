@@ -14,10 +14,10 @@
     </template>
 
     <!-- Personal Feed -->
-    <!-- <template v-if="msgConditions.isPersonalFeed">
+    <template v-if="msgConditions.isPersonalFeed">
       You are seeing personalized feed based on your
       <router-link to="/feed-settings">preferences</router-link>.
-    </template> -->
+    </template>
 
     <!-- Search Result Feed -->
     <template v-if="msgConditions.isSearchResultFeed">
@@ -30,25 +30,37 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-// import { useUserPreferencesStore } from "@/stores/userPreferences";
+import { usePrefrencesStore } from "@/stores/prefrences";
+import { on } from "events";
 
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 // const preferencesStore = useUserPreferencesStore();
+const { prefrences } = usePrefrencesStore();
+console.log("User preferences found:", prefrences);
 
 const msgConditions = computed(() => {
   const hasSearch = Object.keys(route.query).length > 0;
-  // const hasFeed = preferencesStore.feedPreferences &&
-  //   Object.values(preferencesStore.feedPreferences).some(val => val && val.length > 0);
+  let hasFeed;
+  if (prefrences) {
+    console.log("User preferences found:", prefrences);
+    const userPreferences = JSON.parse(prefrences?.feed || "{}");
+    console.log("Parsed user preferences:", userPreferences);
+    hasFeed =
+      userPreferences &&
+      Object.values(userPreferences).some((val) => val && val !== null);
+    console.log("User preferences:", userPreferences);
+  }
+  console.log("Has feed:", hasFeed);
 
   return {
     isGuestFeed: !authStore.isLoggedIn && !hasSearch,
-    isGeneralFeed: authStore.isLoggedIn && !hasSearch,
-    // isPersonalFeed: authStore.isLoggedIn && hasFeed && !hasSearch,
+    isGeneralFeed: authStore.isLoggedIn && !hasFeed && !hasSearch,
+    isPersonalFeed: authStore.isLoggedIn && hasFeed && !hasSearch,
     isSearchResultFeed: hasSearch,
   };
 });
@@ -58,7 +70,7 @@ const alertClass = computed(() => {
     alert: true,
     "alert-info": msgConditions.value.isGuestFeed,
     "alert-warning": msgConditions.value.isGeneralFeed,
-    // "alert-success": msgConditions.value.isPersonalFeed,
+    "alert-success": msgConditions.value.isPersonalFeed,
     "alert-primary": msgConditions.value.isSearchResultFeed,
   };
 });
@@ -70,6 +82,11 @@ const shouldShowAlert = computed(() => {
 const handleClearSearch = () => {
   router.replace({ query: {} });
 };
+
+console.log("User preferences:", prefrences);
+onMounted(() => {
+  console.log("FeedAlert mounted");
+});
 </script>
 
 <style lang="scss" scoped>

@@ -2,7 +2,11 @@ import { useQuery } from "@tanstack/vue-query";
 import { useAuthStore } from "@/stores/auth";
 import { useCategoriesStore } from "@/stores/categories";
 
-export const useCategoriesQuery = () => {
+interface QueryOptions {
+  enabled?: boolean;
+}
+
+export const useCategoriesQuery = (options: QueryOptions = {}) => {
   const { setCategories } = useCategoriesStore();
 
   return useQuery({
@@ -19,5 +23,6 @@ export const useCategoriesQuery = () => {
 
       return data;
     },
+    enabled: options.enabled !== false,
   });
 };

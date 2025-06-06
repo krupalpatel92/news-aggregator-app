@@ -25,7 +25,6 @@ Route::prefix('auth')->group(function () {
    Route::post('/signin', [AuthController::class, 'signin']);
 });
 
-
 // User Routes
 Route::middleware('auth:api')->group(function () {
    // Route::get('user/preferences', [UserPreferenceController::class, 'index']);

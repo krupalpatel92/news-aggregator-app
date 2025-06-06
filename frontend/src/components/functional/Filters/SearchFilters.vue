@@ -26,10 +26,7 @@
       </div>
 
       <div class="filter-group">
-        <CategorySelector
-          v-model="filters.categories"
-          @update:modelValue="handleCategoryChange"
-        />
+        <CategorySelector v-model="filters.categories" />
       </div>
 
       <div class="filter-group">
@@ -52,7 +49,7 @@
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import dayjs, { Dayjs } from "dayjs";
-import { SearchOutlined } from '@ant-design/icons-vue';
+import { SearchOutlined } from "@ant-design/icons-vue";
 import CategorySelector from "../CategorySelector/CategorySelector.vue";
 import AuthorSelector from "../AuthorSelector/AuthorSelector.vue";
 import SourceSelector from "../SourceSelector/SourceSelector.vue";
@@ -143,11 +140,6 @@ const updateURL = (newQuery: Record<string, string> = {}) => {
 
   // Use replace to avoid creating new history entries for every filter change
   router.replace({ query });
-};
-
-const handleCategoryChange = (categories: number[]) => {
-  filters.value.categories = categories;
-  updateURL();
 };
 
 const handleSearch = () => {
@@ -254,7 +246,7 @@ watch(
 
   .ant-picker-input {
     flex: 1;
-    
+
     > input {
       color: #495057;
       width: 100%;

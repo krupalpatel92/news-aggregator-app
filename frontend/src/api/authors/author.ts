@@ -1,7 +1,11 @@
 import { useQuery } from "@tanstack/vue-query";
 import { useAuthorsStore } from "@/stores/authors";
 
-export const useAuthorsQuery = () => {
+interface QueryOptions {
+  enabled?: boolean;
+}
+
+export const useAuthorsQuery = (options: QueryOptions = {}) => {
   const { setAuthors } = useAuthorsStore();
 
   return useQuery({
@@ -18,5 +22,6 @@ export const useAuthorsQuery = () => {
 
       return data;
     },
+    enabled: options.enabled !== false,
   });
 };

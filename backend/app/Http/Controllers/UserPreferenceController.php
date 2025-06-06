@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\UserPreference;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class UserPreferenceController extends Controller
 {
@@ -100,8 +101,8 @@ class UserPreferenceController extends Controller
 
     public function updateFeedPreferences(Request $request)
     {
+        Log::info("coming in updateFeedPreferences");
         try {
-
             // Validate the incoming request parameters
             $request->validate([
                 'categoryIds' => 'string|nullable',
@@ -115,6 +116,11 @@ class UserPreferenceController extends Controller
             $categoryIds = $request->input('categoryIds');
             $sourceIds = $request->input('sourceIds');
             $authorIds = $request->input('authorIds');
+            Log::info("message", [
+                'categoryIds' => $categoryIds,
+                'sourceIds' => $sourceIds,
+                'authorIds' => $authorIds,
+            ]);
 
             $feedPreferences = json_encode([
                 "categoryIds" => !is_null($categoryIds) ? $categoryIds : "",

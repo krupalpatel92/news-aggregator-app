@@ -1,7 +1,11 @@
 import { useQuery } from "@tanstack/vue-query";
 import { useSourcesStore } from "@/stores/sources";
 
-export const useSourcesQuery = () => {
+interface QueryOptions {
+  enabled?: boolean;
+}
+
+export const useSourcesQuery = (options: QueryOptions = {}) => {
   const { setSources } = useSourcesStore();
 
   return useQuery({
@@ -18,5 +22,6 @@ export const useSourcesQuery = () => {
 
       return data;
     },
+    enabled: options.enabled !== false,
   });
 };
