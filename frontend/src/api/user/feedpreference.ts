@@ -6,6 +6,16 @@ interface QueryOptions {
   enabled?: boolean;
 }
 
+interface FeedPreference {
+  feed?: string;
+  notification?: string;
+  email?: string;
+  id?: number;
+  userId?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export const useUpdateFeedPreference = () => {
   const queryClient = useQueryClient();
   const { isLoggedIn, token } = useAuthStore();
@@ -36,11 +46,12 @@ export const useUpdateFeedPreference = () => {
     },
   });
 };
-export const useGetFeedPreference = (options: QueryOptions = {}) => {
-  const { isLoggedIn, token } = useAuthStore();
+
+export const useGetFeedPreference = () => {
+  const authStore = useAuthStore();
   const { setPrefrences } = usePrefrencesStore();
 
-  return useQuery({
+  return useQuery<FeedPreference>({
     queryKey: ["feed-preference"],
     queryFn: async () => {
       try {
@@ -51,7 +62,9 @@ export const useGetFeedPreference = (options: QueryOptions = {}) => {
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
-              ...(isLoggedIn ? { Authorization: `Bearer ${token}` } : {}),
+              ...(authStore.isLoggedIn
+                ? { Authorization: `Bearer ${authStore.token}` }
+                : {}),
             },
           }
         );
@@ -61,22 +74,15 @@ export const useGetFeedPreference = (options: QueryOptions = {}) => {
         }
 
         const data = await response.json();
-        console.log("API Response data:", data);
-        
-        if (data) {
-          setPrefrences(data);
-        }
-        
+        setPrefrences(data); // Store preferences in the Vuex store
         return data;
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error("Error fetching preferences:", error.message);
-        } else {
-          console.error("Unknown error fetching preferences");
-        }
-        throw error;
+      } catch (error) {
+        console.error("Error fetching preferences:", error);
+        throw error; // Re-throw to let Vue Query handle the error state
       }
     },
-    enabled: isLoggedIn && options.enabled !== false,
+    enabled: authStore.isLoggedIn,
+    refetchOnWindowFocus: false,
+    staleTime: 30000, // Consider data fresh for 30 seconds
   });
 };

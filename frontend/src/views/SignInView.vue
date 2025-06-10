@@ -1,5 +1,6 @@
 <template>
   <ContentWrapper>
+    <FeedAlert class="mb-4" />
     <h1 class="text-center mb-4">Sign In</h1>
     <div class="col-md-4 mx-auto">
       <SignInForm />
@@ -7,18 +8,10 @@
   </ContentWrapper>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
 import ContentWrapper from "@/components/ui/ContentWrapper/ContentWrapper.vue";
 import SignInForm from "@/components/functional/SignInForm/SignInForm.vue";
-
-export default defineComponent({
-  name: "SignInView",
-  components: {
-    ContentWrapper,
-    SignInForm,
-  },
-});
+import FeedAlert from "@/components/ui/FeedAlert/FeedAlert.vue";
 </script>
 
 <style scoped>

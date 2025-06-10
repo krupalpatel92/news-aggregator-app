@@ -48,7 +48,7 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .wrapper {
   padding: 0;
   overflow: hidden;
@@ -69,29 +69,29 @@ export default defineComponent({
   align-items: center;
   flex-direction: row;
   justify-content: flex-start;
-}
 
-.logo {
-  padding-right: 20px;
-  border-right: 2px solid #eee;
-  margin-right: 20px;
-  color: #007bff;
-  text-decoration: none;
+  .logo {
+    padding-right: 20px;
+    border-right: 2px solid #eee;
+    margin-right: 20px;
+    color: #007bff;
+    text-decoration: none;
+  }
 }
 
 .main-nav {
   display: flex;
   gap: 1.5rem;
-}
 
-.nav-link {
-  color: #333;
-  text-decoration: none;
-  font-size: 0.95rem;
-}
+  .nav-link {
+    color: #333;
+    text-decoration: none;
+    font-size: 0.95rem;
 
-.nav-link:hover {
-  color: #ff0c81;
+    &:hover {
+      color: #ff0c81;
+    }
+  }
 }
 
 :deep(.router-link-active) {
@@ -100,30 +100,30 @@ export default defineComponent({
 
 .user-section {
   padding: 10px 20px;
-}
 
-.user-name {
-  color: #333;
-  font-size: 0.95rem;
-}
+  .user-name {
+    color: #333;
+    font-size: 0.95rem;
+  }
 
-.logout-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.5rem;
-  border: none;
-  background: none;
-  color: #666;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
+  .logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border: none;
+    background: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 0.9rem;
 
-.logout-btn:hover {
-  color: #333;
-}
+    &:hover {
+      color: #333;
+    }
 
-.logout-icon {
-  font-size: 1rem;
+    .logout-icon {
+      font-size: 1rem;
+    }
+  }
 }
 </style>

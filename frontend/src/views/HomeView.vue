@@ -1,3 +1,94 @@
+<script setup lang="ts">
+import { computed, watch, watchEffect } from "vue";
+import { useRoute } from "vue-router";
+import FeedAlert from "@/components/ui/FeedAlert/FeedAlert.vue";
+import NewsCard from "@/components/ui/NewsCard/NewsCard.vue";
+import ContentWrapper from "@/components/ui/ContentWrapper/ContentWrapper.vue";
+import SearchFilters from "@/components/functional/Filters/SearchFilters.vue";
+import { useCategoriesQuery } from "@/api/category/category";
+import { useAuthorsQuery } from "@/api/authors/author";
+import { useSourcesQuery } from "@/api/sources/source";
+import { useSearchArticlesQuery } from "@/api/articles/search";
+import { useGetFeedPreference } from "@/api/user/feedpreference";
+import { useCategoriesStore } from "@/stores/categories";
+import { useAuthorsStore } from "@/stores/authors";
+import { useSourcesStore } from "@/stores/sources";
+
+const route = useRoute();
+
+// Initialize stores
+const categoriesStore = useCategoriesStore();
+const authorsStore = useAuthorsStore();
+const sourcesStore = useSourcesStore();
+
+// Only fetch data if not already in store
+const { data: categoriesData } = useCategoriesQuery({
+  enabled: !categoriesStore.categories,
+});
+
+const { data: authorsData } = useAuthorsQuery({
+  enabled: !authorsStore.authors,
+});
+
+const { data: sourcesData } = useSourcesQuery({
+  enabled: !sourcesStore.sources,
+});
+
+// Use store data with fallback to query data
+const categories = computed(
+  () => categoriesStore.categories || categoriesData.value || []
+);
+const authors = computed(() => authorsStore.authors || authorsData.value || []);
+const sources = computed(() => sourcesStore.sources || sourcesData.value || []);
+
+// Create search params from route query
+const createSearchParams = () => {
+  const payload = {
+    keyword: route.query.keyword as string,
+    startDate: route.query.start_date as string,
+    endDate: route.query.end_date as string,
+    categoryIds: route.query.category
+      ? (route.query.category as string).split(",").map(Number)
+      : undefined,
+    authorIds: route.query.author
+      ? (route.query.author as string).split(",").map(Number)
+      : undefined,
+    sourceIds: route.query.source
+      ? (route.query.source as string).split(",").map(Number)
+      : undefined,
+  };
+  return JSON.stringify(payload);
+};
+
+// Initialize search params and create computed property for current params
+const currentSearchParams = computed(() => createSearchParams());
+
+// Search articles with the current params
+const { data: searchData, isLoading } =
+  useSearchArticlesQuery(currentSearchParams);
+
+const articles = computed(() => searchData?.value?.data || []);
+
+// Article display sections
+const smallNewsCards = computed(() => articles.value.slice(1, 6));
+const largeNewsCards = computed(() => articles.value.slice(6, 8));
+const mediumNewsCards = computed(() => articles.value.slice(8));
+
+const handleSearch = () => {
+  createSearchParams();
+};
+
+// Watch for query changes to trigger search
+watch(
+  () => route.query,
+  () => {
+    handleSearch();
+    createSearchParams();
+  },
+  { immediate: true, deep: true }
+);
+</script>
+
 <template>
   <ContentWrapper>
     <FeedAlert />
@@ -109,112 +200,3 @@
     </template>
   </ContentWrapper>
 </template>
-
-<script setup lang="ts">
-import { computed, watch, watchEffect } from "vue";
-import { useRoute } from "vue-router";
-import FeedAlert from "@/components/ui/FeedAlert/FeedAlert.vue";
-import NewsCard from "@/components/ui/NewsCard/NewsCard.vue";
-import ContentWrapper from "@/components/ui/ContentWrapper/ContentWrapper.vue";
-import SearchFilters from "@/components/functional/Filters/SearchFilters.vue";
-import { useCategoriesQuery } from "@/api/category/category";
-import { useAuthorsQuery } from "@/api/authors/author";
-import { useSourcesQuery } from "@/api/sources/source";
-import { useSearchArticlesQuery } from "@/api/articles/search";
-import { useGetFeedPreference } from "@/api/user/feedpreference";
-import { useCategoriesStore } from "@/stores/categories";
-import { useAuthorsStore } from "@/stores/authors";
-import { useSourcesStore } from "@/stores/sources";
-import { usePrefrencesStore } from "@/stores/prefrences";
-
-const route = useRoute();
-
-// Initialize stores
-const categoriesStore = useCategoriesStore();
-const authorsStore = useAuthorsStore();
-const sourcesStore = useSourcesStore();
-const { prefrences, setPrefrences } = usePrefrencesStore();
-
-const { data: feedpreference } = useGetFeedPreference({
-  enabled: !prefrences,
-});
-console.log("Feed preferences data:", feedpreference.value);
-
-// Only fetch data if not already in store
-const { data: categoriesData } = useCategoriesQuery({
-  enabled: !categoriesStore.categories,
-});
-
-const { data: authorsData } = useAuthorsQuery({
-  enabled: !authorsStore.authors,
-});
-
-const { data: sourcesData } = useSourcesQuery({
-  enabled: !sourcesStore.sources,
-});
-
-// Use store data with fallback to query data
-const categories = computed(
-  () => categoriesStore.categories || categoriesData.value || []
-);
-const authors = computed(() => authorsStore.authors || authorsData.value || []);
-const sources = computed(() => sourcesStore.sources || sourcesData.value || []);
-
-// Create search params from route query
-const createSearchParams = () => {
-  const payload = {
-    keyword: route.query.keyword as string,
-    startDate: route.query.start_date as string,
-    endDate: route.query.end_date as string,
-    categoryIds: route.query.category
-      ? (route.query.category as string).split(",").map(Number)
-      : undefined,
-    authorIds: route.query.author
-      ? (route.query.author as string).split(",").map(Number)
-      : undefined,
-    sourceIds: route.query.source
-      ? (route.query.source as string).split(",").map(Number)
-      : undefined,
-  };
-  return JSON.stringify(payload);
-};
-
-// Initialize search params and create computed property for current params
-const currentSearchParams = computed(() => createSearchParams());
-console.log("Current search params:", currentSearchParams.value);
-
-// Search articles with the current params
-const { data: searchData, isLoading } =
-  useSearchArticlesQuery(currentSearchParams);
-
-// console.log("Search data:", searchData.value.data);
-
-const articles = computed(() => searchData?.value?.data || []);
-
-// Article display sections
-const smallNewsCards = computed(() => articles.value.slice(1, 6));
-const largeNewsCards = computed(() => articles.value.slice(6, 8));
-const mediumNewsCards = computed(() => articles.value.slice(8));
-
-const handleSearch = () => {
-  createSearchParams();
-};
-
-console.log("Pinia prefrences store:", prefrences);
-
-watchEffect(() => {
-  if (feedpreference.value) {
-    setPrefrences(feedpreference.value);
-  }
-});
-
-// Watch for query changes to trigger search
-watch(
-  () => route.query,
-  () => {
-    handleSearch();
-    createSearchParams();
-  },
-  { immediate: true, deep: true }
-);
-</script>

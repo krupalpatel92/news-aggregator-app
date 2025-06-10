@@ -69,7 +69,10 @@ import {
   useUpdateFeedPreference,
 } from "@/api/user/feedpreference";
 import { useAuthStore } from "@/stores/auth";
-import { usePrefrencesStore } from "@/stores/prefrences";
+import { useCategoriesQuery } from "@/api/category/category";
+import { useAuthorsQuery } from "@/api/authors/author";
+import { useSourcesQuery } from "@/api/sources/source";
+import { toast } from "@/utils/notification";
 
 interface FormData {
   categories: number[];
@@ -77,18 +80,14 @@ interface FormData {
   sources: number[];
 }
 
-const isFeedUpdated = ref(false);
-
+// Initialize stores
 const { mutate: updateFeed } = useUpdateFeedPreference();
 const categoriesStore = useCategoriesStore();
 const authorsStore = useAuthorsStore();
 const sourcesStore = useSourcesStore();
 const { userProfile } = useAuthStore();
-const { prefrences } = usePrefrencesStore();
 
-const { data } = useGetFeedPreference();
-// console.log("User Prefrences:", prefrences.feed);
-
+// Form state
 const isSaving = ref(false);
 const form = ref<FormData>({
   categories: [],
@@ -96,45 +95,70 @@ const form = ref<FormData>({
   sources: [],
 });
 
-const categories = computed(() => categoriesStore.categories || []);
-const authors = computed(() => authorsStore.authors || []);
-const sources = computed(() => sourcesStore.sources || []);
+// Fetch data using Vue Query
+const { data: categoriesData } = useCategoriesQuery({
+  enabled: !categoriesStore.categories,
+});
 
-const initializeForm = () => {
-  if (prefrences) {
-    const prefs = prefrences.feed
-      ? JSON.parse(prefrences.feed)
-      : { categoryIds: "", authorIds: "", sourceIds: "" };
-    console.log("Feed Preferences:", prefs.categoryIds);
-    const feedCategories = prefs.categoryIds
-      ? prefs.categoryIds.split(",")
-      : [];
-    console.log("Feed Categories:", feedCategories);
+const { data: authorsData } = useAuthorsQuery({
+  enabled: !authorsStore.authors,
+});
+
+const { data: sourcesData } = useSourcesQuery({
+  enabled: !sourcesStore.sources,
+});
+
+// Fetch preferences using Vue Query
+const { data: feedPreference, refetch: refetchPreferences } =
+  useGetFeedPreference();
+
+// Computed properties for selectors with fallback to query data
+const categories = computed(
+  () => categoriesStore.categories || categoriesData.value || []
+);
+const authors = computed(() => authorsStore.authors || authorsData.value || []);
+const sources = computed(() => sourcesStore.sources || sourcesData.value || []);
+
+// Initialize form from preferences
+const initializeForm = (prefs: any) => {
+  if (!prefs) return;
+
+  try {
+    const feedData = prefs.feed ? JSON.parse(prefs.feed) : null;
+    if (!feedData) return;
+
     form.value = {
-      categories: prefs.categoryIds
-        ? prefs.categoryIds.split(",").map(Number).filter(Boolean)
+      categories: feedData.categoryIds
+        ? feedData.categoryIds.split(",").map(Number).filter(Boolean)
         : [],
-      authors: prefs.authorIds
-        ? prefs.authorIds.split(",").map(Number).filter(Boolean)
+      authors: feedData.authorIds
+        ? feedData.authorIds.split(",").map(Number).filter(Boolean)
         : [],
-      sources: prefs.sourceIds
-        ? prefs.sourceIds.split(",").map(Number).filter(Boolean)
+      sources: feedData.sourceIds
+        ? feedData.sourceIds.split(",").map(Number).filter(Boolean)
         : [],
     };
+  } catch (error) {
+    console.error("Error parsing preferences:", error);
+    toast.error("Error loading preferences");
   }
 };
 
-onMounted(() => {
-  initializeForm();
-  useGetFeedPreference();
-});
+// Watch for preference changes from Vue Query
+watch(
+  () => feedPreference.value,
+  (newPrefs) => {
+    if (newPrefs) {
+      // Initialize form with new preferences
+      initializeForm(newPrefs);
+    }
+  },
+  { immediate: true }
+);
 
-console.log("Initial form data:", form.value);
-
+// Handle form submission
 const handleSubmit = async () => {
-  console.log("Submitting preferences:", form.value);
   try {
-    console.log("Saving preferences...");
     isSaving.value = true;
     updateFeed({
       categoryIds: form.value.categories.toString(),
@@ -142,25 +166,23 @@ const handleSubmit = async () => {
       sourceIds: form.value.sources.toString(),
       userId: userProfile?.id || null,
     });
-    isFeedUpdated.value = true;
+
+    toast.success("Feed preferences updated successfully");
+
+    // Refetch preferences after successful update
+    await refetchPreferences();
   } catch (error) {
     console.error("Error updating preferences:", error);
+    toast.error("Failed to update feed preferences");
   } finally {
     isSaving.value = false;
   }
 };
 
-watch(
-  () => isFeedUpdated.value,
-  (updated) => {
-    if (updated) {
-      console.log("Updated");
-      const { data } = useGetFeedPreference();
-      console.log("Updated Feed Preferences Data:", data.value);
-      isFeedUpdated.value = false;
-    }
-  }
-);
+// Initialize on mount
+onMounted(async () => {
+  await refetchPreferences();
+});
 </script>
 
 <style lang="scss" scoped>
@@ -198,10 +220,8 @@ h1 {
 
 .d-flex {
   display: flex;
-}
-
-.flex-wrap {
   flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .submit-button {

@@ -22,7 +22,6 @@ export const useSearchArticlesQuery = (searchParams: ComputedRef<string>) => {
         queryParams.append("source_ids", params.sourceIds.join(","));
 
       const url = `http://127.0.0.1:8000/api/news/articles/search?${queryParams.toString()}`;
-      console.log("Fetching articles with URL:", url); // Debug log
 
       const response = await fetch(url, {
         method: "GET",
@@ -34,12 +33,10 @@ export const useSearchArticlesQuery = (searchParams: ComputedRef<string>) => {
 
       if (!response.ok) {
         const error = await response.json();
-        console.error("Search API error:", error); // Debug log
         throw new Error(error.message || "Failed to search articles");
       }
 
       const data = await response.json();
-      console.log("Search API response:", data); // Debug log
       return data;
     },
     staleTime: 0,

@@ -39,6 +39,7 @@ import {
   UserAddOutlined,
   UserOutlined,
 } from "@ant-design/icons-vue";
+import { toast } from "@/utils/notification";
 
 const auth = useAuthStore();
 
@@ -47,6 +48,7 @@ const userProfile = computed(() => auth.userProfile);
 
 const handleLogout = () => {
   auth.logout();
+  toast.success("You have successfully logged out.");
 };
 </script>
 

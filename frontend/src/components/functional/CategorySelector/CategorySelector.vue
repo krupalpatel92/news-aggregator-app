@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useCategoriesStore } from "@/stores/categories";
 import { sortBy } from "lodash-es";
 
@@ -46,22 +46,38 @@ const filterOption = (input: string, option: any) => {
 };
 
 const handleChange = (values: number[]) => {
+  selectedItems.value = values;
   emit("update:modelValue", values || []);
+};
+
+// Initialize selected items when props or categories change
+const updateSelectedItems = () => {
+  if (props.modelValue && categoriesStore.categories) {
+    const validIds = props.modelValue.filter(id => 
+      categoriesStore.categories?.some(category => category.id === id)
+    );
+    selectedItems.value = validIds;
+    if (validIds.length !== props.modelValue.length) {
+      emit("update:modelValue", validIds);
+    }
+  } else {
+    selectedItems.value = [];
+  }
 };
 
 // Watch for both modelValue and categories changes
 watch(
   [() => props.modelValue, () => categoriesStore.categories],
-  ([newValue, categories]) => {
-    if (newValue && categories && categories.length > 0) {
-      selectedItems.value = Array.isArray(newValue) ? newValue : [newValue];
-      console.log("Selected items updated:", selectedItems.value);
-    } else {
-      selectedItems.value = [];
-    }
+  () => {
+    updateSelectedItems();
   },
   { immediate: true }
 );
+
+// Initialize on mount
+onMounted(() => {
+  updateSelectedItems();
+});
 </script>
 
 <style lang="scss" scoped>

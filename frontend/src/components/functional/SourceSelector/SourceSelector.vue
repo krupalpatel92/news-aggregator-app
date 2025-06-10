@@ -61,13 +61,6 @@ watch(
   },
   { immediate: true }
 );
-
-onMounted(async () => {
-  if (!sourcesStore.sources) {
-    await sourcesStore.fetchSources();
-  }
-  isLoading.value = false;
-});
 </script>
 
 <style lang="scss" scoped>
@@ -119,9 +112,8 @@ onMounted(async () => {
   padding: 4px;
   background: white;
   border-radius: 4px;
-  box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12), 
-              0 6px 16px 0 rgba(0, 0, 0, 0.08),
-              0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.12),
+    0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
 
   .ant-select-item {
     padding: 8px 12px;

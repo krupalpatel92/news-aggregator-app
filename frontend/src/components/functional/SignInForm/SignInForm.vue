@@ -1,21 +1,6 @@
 <template>
   <div class="w-100">
-    <div
-      v-if="urlMessage"
-      :class="`alert alert-${
-        urlMessage.type || 'info'
-      } alert-dismissible fade show`"
-      role="alert"
-    >
-      {{ urlMessage.text }}
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="alert"
-        aria-label="Close"
-      ></button>
-    </div>
-
+    <template><FeedAlert /></template>
     <form @submit.prevent="handleSubmit" class="mt-4">
       <div class="mb-3 position-relative">
         <label for="email" class="form-label">Email:</label>
@@ -93,6 +78,7 @@ import { useRouter, useRoute } from "vue-router";
 import { object, string } from "yup";
 import { omit } from "lodash";
 import { useSignInMutation } from "@/api/user/signin";
+import FeedAlert from "@/components/ui/FeedAlert/FeedAlert.vue";
 
 const validationSchema = object({
   email: string().email("Invalid email address").required("Email is required"),
