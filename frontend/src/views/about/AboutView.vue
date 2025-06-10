@@ -13,8 +13,6 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-.about {
-  padding: 20px;
-}
+<style scoped lang="scss">
+@import './AboutView.scss';
 </style> 

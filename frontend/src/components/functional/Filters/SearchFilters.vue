@@ -1,50 +1,3 @@
-<template>
-  <div class="search-filters-wrapper">
-    <div class="search-filters">
-      <div class="filter-group">
-        <a-input
-          v-model:value="filters.keyword"
-          placeholder="Search by keyword"
-          :allowClear="true"
-          @pressEnter="handleSearch"
-        >
-          <template #prefix>
-            <search-outlined />
-          </template>
-        </a-input>
-      </div>
-
-      <div class="filter-group">
-        <a-range-picker
-          v-model:value="filters.dateRange"
-          class="date-picker"
-          :allowClear="true"
-          :disabledDate="disabledDate"
-          format="YYYY-MM-DD"
-          style="width: 100%"
-        />
-      </div>
-
-      <div class="filter-group">
-        <CategorySelector v-model="filters.categories" />
-      </div>
-
-      <div class="filter-group">
-        <AuthorSelector v-model="filters.authors" />
-      </div>
-
-      <div class="filter-group">
-        <SourceSelector v-model="filters.sources" />
-      </div>
-
-      <div class="filter-actions">
-        <a-button type="primary" @click="handleSearch">Search</a-button>
-        <a-button @click="handleClear">Clear</a-button>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -167,140 +120,52 @@ watch(
 );
 </script>
 
+<template>
+  <div class="search-filters-wrapper">
+    <div class="search-filters">
+      <div class="filter-group">
+        <a-input
+          v-model:value="filters.keyword"
+          placeholder="Search by keyword"
+          :allowClear="true"
+          @pressEnter="handleSearch"
+        >
+          <template #prefix>
+            <search-outlined />
+          </template>
+        </a-input>
+      </div>
+
+      <div class="filter-group">
+        <a-range-picker
+          v-model:value="filters.dateRange"
+          class="date-picker"
+          :allowClear="true"
+          :disabledDate="disabledDate"
+          format="YYYY-MM-DD"
+        />
+      </div>
+
+      <div class="filter-group">
+        <CategorySelector v-model="filters.categories" />
+      </div>
+
+      <div class="filter-group">
+        <AuthorSelector v-model="filters.authors" />
+      </div>
+
+      <div class="filter-group">
+        <SourceSelector v-model="filters.sources" />
+      </div>
+
+      <div class="filter-actions">
+        <a-button type="primary" @click="handleSearch">Search</a-button>
+        <a-button @click="handleClear">Clear</a-button>
+      </div>
+    </div>
+  </div>
+</template>
+
 <style lang="scss" scoped>
-.search-filters-wrapper {
-  padding: 20px;
-  border-radius: 10px;
-  border: 2px solid #efefef;
-  position: relative;
-  z-index: 3;
-}
-
-.search-filters {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.filter-group {
-  flex: 1;
-  min-width: 200px;
-
-  :deep(.ant-input-affix-wrapper) {
-    background: #f8f9fa !important;
-    border: 1px solid #ddd !important;
-    border-radius: 4px !important;
-    height: 38px !important;
-    padding: 0 11px !important;
-
-    &:hover {
-      border-color: #007bff !important;
-    }
-  }
-
-  :deep(.ant-input-affix-wrapper-focused) {
-    border-color: #007bff !important;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1) !important;
-  }
-
-  :deep(.ant-input) {
-    background: #f8f9fa !important;
-    height: 100% !important;
-
-    &::placeholder {
-      color: #6c757d;
-    }
-  }
-
-  :deep(.anticon) {
-    color: #6c757d;
-  }
-}
-
-.filter-actions {
-  display: flex;
-  gap: 0.5rem;
-  align-items: flex-start;
-}
-
-:deep(.date-picker) {
-  width: 100%;
-
-  .ant-picker {
-    background: #f8f9fa !important;
-    border: 1px solid #ddd !important;
-    border-radius: 4px !important;
-    height: 38px !important;
-    width: 100% !important;
-    display: flex !important;
-
-    &:hover {
-      border-color: #007bff !important;
-    }
-
-    &.ant-picker-focused {
-      border-color: #007bff !important;
-      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1) !important;
-    }
-  }
-
-  .ant-picker-input {
-    flex: 1;
-
-    > input {
-      color: #495057;
-      width: 100%;
-
-      &::placeholder {
-        color: #6c757d;
-      }
-    }
-  }
-
-  .ant-picker-range-separator {
-    padding: 0 8px;
-  }
-}
-
-:deep(.ant-btn) {
-  height: 38px;
-  border-radius: 4px;
-  padding: 0 1rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  min-width: 80px;
-
-  &.ant-btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-
-    &:hover {
-      background-color: #0056b3;
-      border-color: #0056b3;
-    }
-  }
-
-  &:not(.ant-btn-primary) {
-    border-color: #ddd;
-    color: #495057;
-
-    &:hover {
-      color: #007bff;
-      border-color: #007bff;
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .filter-group {
-    min-width: 100%;
-  }
-
-  .filter-actions {
-    width: 100%;
-    justify-content: flex-end;
-  }
-}
+@import "./searchFilters.scss";
 </style>

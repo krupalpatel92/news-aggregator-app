@@ -222,7 +222,9 @@ class TheNewYorkTimesFeedHelper
                     'feederId' => $this->feeder->id,
                     'name' => $article["headline"]["main"],
                     'slug' => newsArticleUniqueSlug($article["headline"]["main"]),
-                    'imgUrl' => isset($article["multimedia"][0]["url"]) ? "https://www.nytimes.com/" . $article["multimedia"][0]["url"] : null,
+                   'imgUrl' => isset($article["multimedia"]["default"]["url"]) 
+                        ? $article["multimedia"]["default"]["url"] 
+                        : null,
                     'URL' => $article["web_url"],
                     'summary' => $article["snippet"],
                     'content' => $article["lead_paragraph"] ?? null, // Handle missing key gracefully

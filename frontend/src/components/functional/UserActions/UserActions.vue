@@ -53,22 +53,5 @@ const handleLogout = () => {
 </script>
 
 <style scoped lang="scss">
-.user-actions {
-  display: flex;
-  align-items: center;
-
-  a,
-  button {
-    font-weight: 400;
-    letter-spacing: 0.5px;
-  }
-
-  .action-icon {
-    font-size: 18px;
-  }
-
-  :deep(.anticon) {
-    font-size: 18px;
-  }
-}
+@import "./userActions.scss";
 </style>

@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import HomeView from "../views/HomeView.vue";
+import HomeView from "@/views/home/HomeView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,19 +13,19 @@ const router = createRouter({
     {
       path: "/feed-settings",
       name: "feedSettings",
-      component: () => import("../views/FeedSettingsView.vue"),
+      component: () => import("../views/feed-settings/FeedSettingsView.vue"),
       meta: { requiresAuth: true },
     },
     {
       path: "/signin",
       name: "signin",
-      component: () => import("../views/SignInView.vue"),
+      component: () => import("../views/signin/SignInView.vue"),
       meta: { guestOnly: true },
     },
     {
       path: "/signup",
       name: "signup",
-      component: () => import("../views/SignUpView.vue"),
+      component: () => import("../views/signup/SignUpView.vue"),
       meta: { guestOnly: true },
     },
   ],

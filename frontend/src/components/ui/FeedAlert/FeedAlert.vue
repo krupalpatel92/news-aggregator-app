@@ -92,48 +92,5 @@ const handleClearSearch = () => {
 </script>
 
 <style lang="scss" scoped>
-.alert {
-  padding: 1rem;
-  border-radius: 6px;
-  margin-bottom: 1rem;
-  border: 1px solid transparent;
-
-  &.alert-info {
-    background-color: #cce5ff;
-    border-color: #b8daff;
-    color: #004085;
-  }
-
-  &.alert-warning {
-    background-color: #fff3cd;
-    border-color: #ffeeba;
-    color: #856404;
-  }
-
-  &.alert-success {
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-    color: #155724;
-  }
-
-  &.alert-primary {
-    background-color: #e7f5ff;
-    border-color: #b8daff;
-    color: #004085;
-  }
-
-  a {
-    color: inherit;
-    text-decoration: none;
-    font-weight: 500;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  .clear-search {
-    margin-left: 0.5rem;
-  }
-}
+@import './FeedAlert.scss';
 </style>

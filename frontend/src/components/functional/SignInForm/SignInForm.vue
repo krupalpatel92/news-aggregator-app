@@ -1,3 +1,97 @@
+<script lang="ts">
+import { defineComponent, ref, reactive } from "vue";
+import { useRoute } from "vue-router";
+import { object, string } from "yup";
+import { omit } from "lodash";
+import { useSignInMutation } from "@/api/user/signin";
+
+const validationSchema = object({
+  email: string().email("Invalid email address").required("Email is required"),
+  password: string()
+    .min(8, "Password must be at least 8 characters")
+    .required("Password is required"),
+});
+
+export default defineComponent({
+  name: "SignInForm",
+  setup() {
+    const route = useRoute();
+    const { mutate: signIn } = useSignInMutation();
+
+    const form = reactive({
+      email: "",
+      password: "",
+      rememberMe: false,
+    });
+
+    const touched = reactive({
+      email: false,
+      password: false,
+    });
+
+    const errors = reactive({
+      email: "",
+      password: "",
+    });
+
+    const isSubmitting = ref(false);
+    const error = ref(false);
+    const urlMessage = ref(route.query.message || null);
+
+    const handleBlur = async (field: keyof typeof touched) => {
+      touched[field] = true;
+      try {
+        await validationSchema.validateAt(field, form);
+        errors[field] = "";
+      } catch (err: any) {
+        errors[field] = err.message;
+      }
+    };
+
+    const validateForm = async () => {
+      try {
+        await validationSchema.validate(form, { abortEarly: false });
+        return true;
+      } catch (err: any) {
+        err.inner.forEach((error: any) => {
+          errors[error.path as keyof typeof errors] = error.message;
+          touched[error.path as keyof typeof touched] = true;
+        });
+        return false;
+      }
+    };
+
+    const handleSubmit = async () => {
+      const isValid = await validateForm();
+      if (!isValid) return;
+
+      isSubmitting.value = true;
+      error.value = false;
+
+      try {
+        // TODO: Implement sign in API call
+        await signIn(omit(form, ["rememberMe"]));
+      } catch (err) {
+        error.value = true;
+      } finally {
+        isSubmitting.value = false;
+      }
+    };
+
+    return {
+      form,
+      touched,
+      errors,
+      isSubmitting,
+      error,
+      urlMessage,
+      handleBlur,
+      handleSubmit,
+    };
+  },
+});
+</script>
+
 <template>
   <div class="w-100">
     <template><FeedAlert /></template>
@@ -71,99 +165,3 @@
     </form>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent, ref, reactive } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { object, string } from "yup";
-import { omit } from "lodash";
-import { useSignInMutation } from "@/api/user/signin";
-import FeedAlert from "@/components/ui/FeedAlert/FeedAlert.vue";
-
-const validationSchema = object({
-  email: string().email("Invalid email address").required("Email is required"),
-  password: string()
-    .min(8, "Password must be at least 8 characters")
-    .required("Password is required"),
-});
-
-export default defineComponent({
-  name: "SignInForm",
-  setup() {
-    const router = useRouter();
-    const route = useRoute();
-    const { mutate: signIn } = useSignInMutation();
-
-    const form = reactive({
-      email: "",
-      password: "",
-      rememberMe: false,
-    });
-
-    const touched = reactive({
-      email: false,
-      password: false,
-    });
-
-    const errors = reactive({
-      email: "",
-      password: "",
-    });
-
-    const isSubmitting = ref(false);
-    const error = ref(false);
-    const urlMessage = ref(route.state?.message);
-
-    const handleBlur = async (field: keyof typeof form) => {
-      touched[field] = true;
-      try {
-        await validationSchema.validateAt(field, form);
-        errors[field] = "";
-      } catch (err: any) {
-        errors[field] = err.message;
-      }
-    };
-
-    const validateForm = async () => {
-      try {
-        await validationSchema.validate(form, { abortEarly: false });
-        return true;
-      } catch (err: any) {
-        err.inner.forEach((error: any) => {
-          errors[error.path] = error.message;
-          touched[error.path] = true;
-        });
-        return false;
-      }
-    };
-
-    const handleSubmit = async () => {
-      const isValid = await validateForm();
-      if (!isValid) return;
-
-      isSubmitting.value = true;
-      error.value = false;
-
-      try {
-        // TODO: Implement sign in API call
-        await signIn(omit(form, ["rememberMe"]));
-      } catch (err) {
-        error.value = true;
-      } finally {
-        isSubmitting.value = false;
-      }
-    };
-
-    return {
-      form,
-      touched,
-      errors,
-      isSubmitting,
-      error,
-      urlMessage,
-      handleBlur,
-      handleSubmit,
-    };
-  },
-});
-</script>

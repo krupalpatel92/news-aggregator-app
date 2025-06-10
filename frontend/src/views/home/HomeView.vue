@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch, watchEffect } from "vue";
+import { computed, provide, watch } from "vue";
 import { useRoute } from "vue-router";
 import FeedAlert from "@/components/ui/FeedAlert/FeedAlert.vue";
 import NewsCard from "@/components/ui/NewsCard/NewsCard.vue";
@@ -9,7 +9,6 @@ import { useCategoriesQuery } from "@/api/category/category";
 import { useAuthorsQuery } from "@/api/authors/author";
 import { useSourcesQuery } from "@/api/sources/source";
 import { useSearchArticlesQuery } from "@/api/articles/search";
-import { useGetFeedPreference } from "@/api/user/feedpreference";
 import { useCategoriesStore } from "@/stores/categories";
 import { useAuthorsStore } from "@/stores/authors";
 import { useSourcesStore } from "@/stores/sources";
@@ -87,6 +86,11 @@ watch(
   },
   { immediate: true, deep: true }
 );
+
+console.log("Authors Data:", categoriesData);
+
+const provided = provide("categoriesData", categoriesData);
+console.log("Provided categories Data:", provided);
 </script>
 
 <template>
@@ -141,7 +145,7 @@ watch(
             :key="article.slug + index"
             class="mb-3"
           >
-            <NewsCard :article="article" type="medium" />
+            <NewsCard :article="article" type="small" />
           </div>
         </div>
 
