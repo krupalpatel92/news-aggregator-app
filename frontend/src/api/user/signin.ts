@@ -1,48 +1,42 @@
-import { useMutation } from "@tanstack/vue-query";
-import { useAuthStore } from "@/stores/auth";
-import { useRouter, useRoute } from "vue-router";
+import api from 'api';
+import { useMutation } from '@tanstack/react-query';
+import { getAuthSignInUrl } from 'api/endpoints';
+import { SignInPayload } from './types';
+import { useAuth } from 'context/auth/AuthContext';
+import { toast } from 'react-toastify';
+import { getPersonalFeedSettingPath } from 'route/paths';
+import { useHistory } from 'react-router-dom';
+import { invalidateArticleSearchQuery } from 'api/article/search';
 
-interface SignInPayload {
-  email: string;
-  password: string;
-}
+const useSignInCall = () => {
+	const { setLogin } = useAuth();
+	const history = useHistory();
 
-export const useSignInMutation = () => {
-  const auth = useAuthStore();
-  const router = useRouter();
-  const route = useRoute();
+	return useMutation({
+		mutationFn: (data: SignInPayload) => {
+			const resData = api
+				.post(getAuthSignInUrl(), data)
+				.then(res => {
+					const data = res.data;
+					setLogin({ accessToken: data.accessToken, expireAt: data.expireAt, user: data.user });
+					history.push(getPersonalFeedSettingPath());
+				})
+				.catch(err => {
+					toast.error('Invalid email or password');
+				});
 
-  return useMutation({
-    mutationKey: ["signin"],
-    mutationFn: async (data: SignInPayload) => {
-      const response = await fetch("http://127.0.0.1:8000/api/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+			// Refresh home page feed to have article as per feed settings
+			invalidateArticleSearchQuery();
+			toast.info('Your feed is refreshed as per settings.');
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Sign in failed");
-      }
-
-      const result = await response.json();
-      
-      // Set login data after successful signin
-      auth.setLogin({
-        accessToken: result.accessToken,
-        expireAt: result.expireAt,
-        user: result.user,
-      });
-
-      // Redirect to the intended destination or home
-      const redirectPath = route.query.redirect as string || "/";
-      router.push(redirectPath);
-
-      return result;
-    },
-  });
+			return resData;
+		},
+		onError: error => {
+			// Report error to sentry or other service
+			// Sentry.captureException(error);
+			return error;
+		},
+	});
 };
+
+export default useSignInCall;

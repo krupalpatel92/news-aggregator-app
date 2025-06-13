@@ -10,7 +10,7 @@ import router from "./router";
 
 // Import Bootstrap styles and JS
 import "./assets/styles/bootstrap.scss";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 // Import Font Awesome
 import "@fortawesome/fontawesome-free/css/all.css"; // ✅ includes solid, regular, brands, etc.

@@ -1,47 +1,46 @@
-import { useMutation } from "@tanstack/vue-query";
-import { useAuthStore } from "@/stores/auth";
-import { useRouter } from "vue-router";
+import api from 'api';
+import { useMutation } from '@tanstack/react-query';
+import { getAuthSignUpUrl } from 'api/endpoints';
+import { SignUpPayload } from './types';
+import { useAuth } from 'context/auth/AuthContext';
+import { toast } from 'react-toastify';
+import { getPersonalFeedSettingPath } from 'route/paths';
+import { useHistory } from 'react-router-dom';
+import { invalidateArticleSearchQuery } from 'api/article/search';
 
-interface SignUpPayload {
-  name: string;
-  email: string;
-  password: string;
-}
+const useSignUpCall = () => {
+	const { setLogin } = useAuth();
+	const history = useHistory();
 
-export const useSignUpMutation = () => {
-  const auth = useAuthStore();
-  const router = useRouter();
+	return useMutation({
+		mutationFn: (data: SignUpPayload) => {
+			const resData = api
+				.post(getAuthSignUpUrl(), data)
+				.then(res => {
+					const data = res.data;
+					setLogin({ accessToken: data.accessToken, expireAt: data.expireAt, user: data.user });
+					history.push(getPersonalFeedSettingPath());
+					toast.warning('Setup your Feed Preferences to get right news for you.');
+					return data;
+				})
+				.catch(err => {
+					const errMsg = err.response?.data?.error;
+					return Object.keys(errMsg).reduce((acc, key) => {
+						acc[key] = errMsg[key].join(', ');
+						toast.error(acc[key]);
+						return acc;
+					}, {});
+				});
 
-  return useMutation({
-    mutationKey: ["signup"],
-    mutationFn: async (data: SignUpPayload) => {
-      const response = await fetch("http://127.0.0.1:8000/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Signup failed");
-      }
-
-      const result = await response.json();
-
-      // Set login data after successful signup
-      auth.setLogin({
-        accessToken: result.accessToken,
-        expireAt: result.expireAt,
-        user: result.user,
-      });
-
-      // Redirect to feed settings after successful signup
-      router.push("/feed-settings");
-
-      return result;
-    },
-  });
+			return resData;
+		},
+		onError: error => {
+			console.log(error);
+			// Report error to sentry or other service
+			// Sentry.captureException(error);
+			return error;
+		},
+	});
 };
+
+export default useSignUpCall;
