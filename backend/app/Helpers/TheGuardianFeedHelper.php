@@ -14,7 +14,6 @@ class TheGuardianFeedHelper
     private $defaultSourceName = "TheGuardian.com"; // When no author is found in the article, this will be used.
     private $apiParam = ["q" => "world", "pageSize" => 200, "page" => 1];
 
-
     public function __construct($source, $query, $perPage, $page)
     {
         $this->feeder = $source;
