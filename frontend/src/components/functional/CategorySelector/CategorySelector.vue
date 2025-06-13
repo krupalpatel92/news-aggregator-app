@@ -45,26 +45,6 @@ const options = computed(() => {
   }));
 });
 
-// With Provide/Inject approach without drilling
-// const options = computed(() => {
-//   // 4. Debug: Log inside computed
-//   console.log("Computing options, injectedCategories:", withoutDrilling);
-
-//   // 5. Safely access the data with optional chaining and fallback
-//   const categoriesData = withoutDrilling?.value ?? [];
-//   console.log("Categories data in computed:", categoriesData);
-
-//   if (!Array.isArray(categoriesData)) {
-//     console.log("Categories data is not an array:", categoriesData);
-//     return [];
-//   }
-
-//   return sortBy(categoriesData, "name").map((category) => ({
-//     value: category.id,
-//     label: category.name,
-//   }));
-// });
-
 const filterOption = (input: string, option: any) => {
   return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 };
@@ -93,7 +73,6 @@ const updateSelectedItems = () => {
 watch(
   [() => props.modelValue, () => categoriesStore.categories],
   () => {
-    console.log("Props values", props.modelValue);
     updateSelectedItems();
   },
   { immediate: true }

@@ -87,15 +87,13 @@ watch(
   { immediate: true, deep: true }
 );
 
-console.log("Authors Data:", categoriesData);
-
 const provided = provide("categoriesData", categoriesData);
-console.log("Provided categories Data:", provided);
 </script>
 
 <template>
   <ContentWrapper>
     <FeedAlert />
+
     <div class="row mb-4">
       <div class="col">
         <SearchFilters @search="handleSearch" />

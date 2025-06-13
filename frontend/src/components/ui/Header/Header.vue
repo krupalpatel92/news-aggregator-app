@@ -33,12 +33,6 @@ export default defineComponent({
       userName: "Neel Brahmbhatt", // This should come from your auth store later
     };
   },
-  methods: {
-    handleLogout() {
-      // Implement logout logic
-      console.log("Logout clicked");
-    },
-  },
 });
 </script>
 

@@ -6,7 +6,6 @@ import { SearchOutlined } from "@ant-design/icons-vue";
 import CategorySelector from "../CategorySelector/CategorySelector.vue";
 import AuthorSelector from "../AuthorSelector/AuthorSelector.vue";
 import SourceSelector from "../SourceSelector/SourceSelector.vue";
-
 interface Filters {
   keyword: string;
   dateRange: [Dayjs, Dayjs] | null;

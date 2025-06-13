@@ -4,7 +4,7 @@ import { ref } from "vue";
 interface Preferences {
   feed?: string;
   notification?: string;
-  email?: 'everyday' | 'twice-a-week' | 'biweekly';
+  email?: "everyday" | "twice-a-week" | "biweekly";
   id?: number;
   userId?: number;
   created_at?: string;
@@ -15,7 +15,6 @@ export const usePrefrencesStore = defineStore("prefrences", () => {
   const prefrences = ref<Preferences | null>(null);
 
   const setPrefrences = (newPrefrences: Preferences) => {
-    console.log("Setting new preferences:", newPrefrences);
     prefrences.value = newPrefrences;
   };
 
